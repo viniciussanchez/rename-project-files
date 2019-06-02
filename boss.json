@@ -1,0 +1,14 @@
+{
+	"name": "rename-files",
+	"description": "",
+	"version": "1.0.0",
+	"homepage": "",
+	"mainsrc": "./",
+	"projects": [],
+	"dependencies": {
+		"github.com/viniciussanchez/blockui-vcl": "^v1.0.1",
+		"github.com/viniciussanchez/dataset-serialize": "^v1.0.0",
+		"github.com/viniciussanchez/dialogs-vcl": "^v1.0.0",
+		"github.com/viniciussanchez/wait-vcl": "^v1.0.0"
+	}
+}
