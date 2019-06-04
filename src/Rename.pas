@@ -26,11 +26,15 @@ type
     mtFilesDIRECTORY: TStringField;
     Button2: TButton;
     Button3: TButton;
+    mtFilesRENAME: TStringField;
     procedure btnSearchClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure DBGrid1TitleClick(Column: TColumn);
+    procedure mtFilesAfterInsert(DataSet: TDataSet);
+    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
   private
     function GetDataFileName: string;
   end;
@@ -40,7 +44,7 @@ var
 
 implementation
 
-uses Vcl.FileCtrl, Rename.Utils, DataSet.Serialize.Helper, System.JSON;
+uses Vcl.FileCtrl, Rename.Utils, DataSet.Serialize.Helper, System.JSON, VCL.Wait.Intf, VCL.Wait;
 
 {$R *.dfm}
 
@@ -68,11 +72,20 @@ begin
   if mtFiles.IsEmpty then
     Exit;
   if TDialogs.Confirm('Do you want to rename the files?') then
-    TDirectoryUtils.RenameFiles(mtFiles);
+  begin
+    if TDirectoryUtils.ValidateFileName(mtFiles) then
+    begin
+      if TDirectoryUtils.RenameFiles(mtFiles) then
+        TDirectoryUtils.UpdateFiles(mtFiles);
+    end
+    else
+      TDialogs.Warning('Invalid filename');
+  end;
 end;
 
 procedure TFrmMain.Button2Click(Sender: TObject);
 var
+  Waiting: IWait;
   DataArray: TJSONArray;
   Data: TStrings;
 begin
@@ -81,6 +94,7 @@ begin
     TDialogs.Warning('Data file not found!');
     Exit;
   end;
+  Waiting := TWait.Create('Loading...');
   Data := TStringList.Create;
   try
     Data.LoadFromFile(GetDataFileName);
@@ -101,19 +115,36 @@ var
   Data: TJSONArray;
   SaveFile: TStrings;
 begin
-  Data := mtFiles.ToJSONArray;
+  mtFiles.DisableControls;
   try
-    SaveFile := TStringList.Create;
+    Data := mtFiles.ToJSONArray;
     try
-      SaveFile.Text := Data.ToString;
-      SaveFile.SaveToFile(GetDataFileName);
+      SaveFile := TStringList.Create;
+      try
+        SaveFile.Text := Data.ToString;
+        SaveFile.SaveToFile(GetDataFileName);
+      finally
+        SaveFile.Free;
+      end;
+      TDialogs.Info('Exported: ' + GetDataFileName);
     finally
-      SaveFile.Free;
+      Data.Free;
     end;
-    TDialogs.Info('Exported: ' + GetDataFileName);
   finally
-    Data.Free;
+    mtFiles.EnableControls;
   end;
+end;
+
+procedure TFrmMain.DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if mtFilesRENAME.AsString = 'S' then
+    DBGrid1.Canvas.Brush.Color := clRed;
+  DBGrid1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+end;
+
+procedure TFrmMain.DBGrid1TitleClick(Column: TColumn);
+begin
+  mtFiles.IndexFieldNames := Column.FieldName;
 end;
 
 procedure TFrmMain.FormCreate(Sender: TObject);
@@ -126,6 +157,11 @@ end;
 function TFrmMain.GetDataFileName: string;
 begin
   Result := ExtractFilePath(Application.ExeName) + 'Rename.json';
+end;
+
+procedure TFrmMain.mtFilesAfterInsert(DataSet: TDataSet);
+begin
+  mtFilesRENAME.AsString := 'N';
 end;
 
 end.

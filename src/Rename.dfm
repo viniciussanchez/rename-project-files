@@ -65,6 +65,8 @@ object FrmMain: TFrmMain
       TitleFont.Height = -11
       TitleFont.Name = 'Segoe UI'
       TitleFont.Style = []
+      OnDrawColumnCell = DBGrid1DrawColumnCell
+      OnTitleClick = DBGrid1TitleClick
       Columns = <
         item
           Color = clBtnFace
@@ -157,6 +159,7 @@ object FrmMain: TFrmMain
     Top = 216
   end
   object mtFiles: TFDMemTable
+    AfterInsert = mtFilesAfterInsert
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
     ResourceOptions.AssignedValues = [rvSilentMode]
@@ -189,6 +192,10 @@ object FrmMain: TFrmMain
     object mtFilesDIRECTORY: TStringField
       FieldName = 'DIRECTORY'
       Size = 1000
+    end
+    object mtFilesRENAME: TStringField
+      FieldName = 'RENAME'
+      Size = 1
     end
   end
 end
