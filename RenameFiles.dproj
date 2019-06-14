@@ -57,9 +57,8 @@
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
-        <SanitizedProjectName>RenameFiles</SanitizedProjectName>
-        <DCC_UnitSearchPath>modules\.dcp;modules\.dcu;modules;modules\blockui-vcl\src;modules\dataset-serialize\src\core;modules\dataset-serialize\src\helpers;modules\dataset-serialize\src\interfaces;modules\dataset-serialize\src\providers;modules\dataset-serialize\src\types;modules\dialogs-vcl\src;modules\dialogs-vcl\src\input;modules\dialogs-vcl\src\modal;modules\wait-vcl\src;modules\wait-vcl\src\providers;modules\wait-vcl\src\view;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-    </PropertyGroup>
+        <SanitizedProjectName>RenameFiles</SanitizedProjectName>        
+    <DCC_UnitSearchPath>$(DCC_UnitSearchPath);modules\.dcp;modules\.dcu;modules;modules\blockui-vcl\src;modules\dataset-serialize\src\core;modules\dataset-serialize\src\helpers;modules\dataset-serialize\src\interfaces;modules\dataset-serialize\src\providers;modules\dataset-serialize\src\types;modules\dialogs4delphi\src;modules\dialogs4delphi\src\input;modules\dialogs4delphi\src\modal;modules\wait-vcl\src;modules\wait-vcl\src\providers;modules\wait-vcl\src\view</DCC_UnitSearchPath></PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;dxFlowChartRS26;dxPSdxMapControlLnkRS26;vclactnband;dxBarRS26;vclFireDAC;dxFireDACEMFRS26;tethering;dxSpreadSheetInplaceRichEditRS26;FireDACADSDriver;dxSkinVisualStudio2013BlueRS26;dxRichEditCoreRS26;dxPSdxSpreadSheetLnkRS26;dxSkinSharpPlusRS26;vcltouch;vcldb;svn;dxSkinFoggyRS26;dxSkinVisualStudio2013DarkRS26;dxSkinOffice2013DarkGrayRS26;dxGDIPlusRS26;dxAuthorizationAgentsRS26;dxPSdxFCLnkRS26;dxPSLnksRS26;dxPsPrVwAdvRS26;cxGridRS26;dxPDFViewerRS26;dxSkinSpringTimeRS26;vclx;dxPScxTLLnkRS26;dxSkinOffice2010BlueRS26;RESTBackendComponents;dxSkinOffice2016DarkRS26;VCLRESTComponents;dxSkinMoneyTwinsRS26;dxSkinOffice2016ColorfulRS26;dxSkinValentineRS26;dxSkinHighContrastRS26;vclie;bindengine;CloudService;dxmdsRS26;FireDACMySQLDriver;dxdborRS26;dxSkinOffice2013WhiteRS26;dxFireDACServerModeRS26;bindcompdbx;IndyIPServer;cxPivotGridRS26;IndySystem;dxSkinDarkRoomRS26;cxTreeListdxBarPopupMenuRS26;dsnapcon;cxTreeListRS26;dxPScxPivotGridLnkRS26;cxSchedulerRibbonStyleEventEditorRS26;dxPSCoreRS26;FireDACMSAccDriver;fmxFireDAC;dxSpreadSheetRS26;vclimg;dxBarExtItemsRS26;dxPSdxGaugeControlLnkRS26;dxSkinLondonLiquidSkyRS26;dxSkinSevenRS26;dxdbtrRS26;dxRichEditControlCoreRS26;soaprtl;DbxCommonDriver;dxFlowChartAdvancedCustomizeFormRS26;dxSkinLiquidSkyRS26;dxDockingRS26;xmlrtl;soapmidas;fmxobj;cxLibraryRS26;rtl;DbxClientDriver;cxDataRS26;dxPScxSchedulerLnkRS26;dxSpreadSheetConditionalFormattingDialogsRS26;appanalytics;dxRibbonCustomizationFormRS26;cxSchedulerGridRS26;IndyIPClient;bindcompvcl;dxSkinVisualStudio2013LightRS26;dxADOEMFRS26;VclSmp;dxRibbonRS26;dxPScxCommonRS26;dxRichEditDocumentModelRS26;dxPScxGridLnkRS26;dxSkinDevExpressDarkStyleRS26;dxSpreadSheetCoreRS26;RESTComponents;dxSkinGlassOceansRS26;DBXInterBaseDriver;dxPScxExtCommonRS26;dxSkinPumpkinRS26;dxSkinXmas2008BlueRS26;svnui;dxSkinOffice2007SilverRS26;cxPageControlRS26;dxSkinTheBezierRS26;dxSkinDevExpressStyleRS26;dxRichEditControlRS26;dxGaugeControlRS26;dxorgcRS26;dxPScxVGridLnkRS26;bindcompfmx;dxSkinOffice2007PinkRS26;inetdb;dxSkinOffice2007BlueRS26;dxSkinStardustRS26;dxBarDBNavRS26;dxDBXServerModeRS26;dxSkinTheAsphaltWorldRS26;dxSkinSilverRS26;dxLayoutControlRS26;dxSkinBlueprintRS26;fmx;FireDACIBDriver;fmxdae;dxServerModeRS26;dxWizardControlRS26;dxSkiniMaginaryRS26;dxTabbedMDIRS26;dxEMFRS26;dbexpress;IndyCore;dxComnRS26;dsnap;dxSkinSharpRS26;FireDACCommon;cxSchedulerTreeBrowserRS26;dxADOServerModeRS26;soapserver;dxSkinOffice2007BlackRS26;cxPivotGridOLAPRS26;cxVerticalGridRS26;dxtrmdRS26;DBXMySQLDriver;cxEditorsRS26;cxSchedulerRS26;cxSchedulerWebServiceStorageRS26;dxSkinMetropolisDarkRS26;dxSkinOffice2010BlackRS26;dxPSdxLCLnkRS26;FireDACCommonODBC;FireDACCommonDriver;dxMapControlRS26;dxSkinBlackRS26;dxSkinOffice2013LightGrayRS26;inet;dxSpellCheckerRS26;dxSkinCoffeeRS26;IndyIPCommon;dxSpreadSheetCoreConditionalFormattingDialogsRS26;vcl;dxPSdxDBOCLnkRS26;dxSkinMetropolisRS26;dxSpreadSheetReportDesignerRS26;dxPScxPCProdRS26;dxNavBarRS26;dxCoreRS26;cxExportRS26;FireDAC;dxThemeRS26;dxHttpIndyRequestRS26;dxPSPrVwRibbonRS26;dxSkinOffice2010SilverRS26;FireDACSqliteDriver;FireDACPgDriver;dxPSRichEditControlLnkRS26;dxSkinSevenClassicRS26;cxPivotGridChartRS26;dxPSdxDBTVLnkRS26;vclwinx;dxOfficeCoreRS26;dxTileControlRS26;dxSkinsCoreRS26;CustomIPTransport;vcldsnap;bindcomp;dxSkinLilianRS26;dxSkinSummer2008RS26;dxPSdxOCLnkRS26;dxSkinVS2010RS26;dxSkinBlueRS26;dbxcds;adortl;dxSkinMcSkinRS26;dxSkinDarkSideRS26;dxSpreadSheetCoreDialogsRS26;dxBarExtDBItemsRS26;dsnapxml;dbrtl;IndyProtocols;inetdbxpress;dxSkinOffice2007GreenRS26;dxRichEditInplaceRS26;dxSkinWhiteprintRS26;dxPSdxPDFViewerLnkRS26;dxSkinCaramelRS26;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
@@ -99,7 +98,7 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="src\Rename.Utils.pas"/>
+        <DCCReference Include="src\Rename.Utils.pas"></DCCReference>
         <DCCReference Include="src\Rename.pas">
             <Form>FrmMain</Form>
             <FormType>dfm</FormType>
@@ -591,15 +590,15 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"></ProjectRoot>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"></ProjectRoot>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"></ProjectRoot>
+                <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"></ProjectRoot>
+                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"></ProjectRoot>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"></ProjectRoot>
+                <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"></ProjectRoot>
+                <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME).app"></ProjectRoot>
+                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"></ProjectRoot>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>
@@ -608,7 +607,7 @@
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
-    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
-    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
-    <Import Project="$(MSBuildProjectName).deployproj" Condition="Exists('$(MSBuildProjectName).deployproj')"/>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"></Import>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"></Import>
+    <Import Project="$(MSBuildProjectName).deployproj" Condition="Exists('$(MSBuildProjectName).deployproj')"></Import>
 </Project>

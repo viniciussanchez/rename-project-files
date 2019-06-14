@@ -8,7 +8,7 @@
 	"dependencies": {
 		"github.com/viniciussanchez/blockui-vcl": "^v1.0.1",
 		"github.com/viniciussanchez/dataset-serialize": "^v1.0.0",
-		"github.com/viniciussanchez/dialogs-vcl": "^v1.0.0",
-		"github.com/viniciussanchez/wait-vcl": "^v1.0.0"
+		"github.com/viniciussanchez/dialogs4delphi": "^v1.1.0",
+		"github.com/viniciussanchez/wait-vcl": "^v2.1.1"
 	}
 }

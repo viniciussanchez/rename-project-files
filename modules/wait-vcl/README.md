@@ -1,63 +1,70 @@
 # Form to wait for VCL projects (Delphi)
-This component allows you to create forms of wait with progress bar (optional) in a simple way.
+![Delphi Supported Versions](https://img.shields.io/badge/Delphi%20Supported%20Versions-XE3..10.3%20Rio-blue.svg)
+![Platforms](https://img.shields.io/badge/Platforms-Win32%20and%20Win64-red.svg)
 
-### Prerequisites
- * [**Boss**](https://github.com/HashLoad/boss) - Dependency Manager for Delphi
+This component allows you to create forms of wait with progress bar (optional) in a simple way using threads. The use of the thread causes the application not to be locked during the execution of a process.
+
+## Prerequisites
+ * `[Optional]` For ease I recommend using the Boss for installation
+   * [**Boss**](https://github.com/HashLoad/boss) - Dependency Manager for Delphi
  * [**BlockUI-VCL**](https://github.com/viniciussanchez/blockui-vcl) - Block User Interface for VCL Projects (Delphi)
  
-### Installation: 
+### Installation using Boss (dependency manager for Delphi applications)
 ```
 boss install github.com/viniciussanchez/wait-vcl
 ```
 
-### Getting Started
-You need to use VCL.Wait.Intf and VCL.Wait
+### Manual Installation
+Add the following folders to your project, in *Project > Options > Resource Compiler > Directories and Conditionals > Include file search path*
 ```
-uses VCL.Wait.Intf, VCL.Wait;
+../wait-vcl/src
+../wait-vcl/src/view
+../wait-vcl/src/providers
+```
+
+### Getting Started
+You need to use VCL.Wait
+```
+uses VCL.Wait;
 ```
 
 #### Form with progress bar
 ```
 var
-  I: Integer;
-  Waiting: IWait;
+  Waiting: TWait;
 begin
-  Waiting := TWait.Create('Exemplifying the wait screen', Self);
-  Waiting.ShowProgressBar(True);
-  Waiting.ProgressBar.SetMax(100);
-  Waiting.ProgressBar.SetPosition(0);
-  for I := 1 to 100 do
-  begin
-    Sleep(50);
-    Waiting.ProgressBar.Step;
-  end;
-end;
+  Waiting := TWait.Create('Aguarde...');
+  Waiting.Start(
+    procedure
+    var
+      I: Integer;
+    begin
+      Waiting.ProgressBar.SetMax(100);
+      for I := 1 to 100 do
+      begin
+        Waiting.SetContent('Aguarde... ' + I.ToString + ' de 100').ProgressBar.Step();
+        Sleep(100); // Your code here!!!
+      end;
+    end);
 ``` 
-
-**Self** refers to the component that will be blocked until the end. The default is Application.MainForm.
-
-```
-Waiting := TWait.Create('Exemplifying the wait screen', Self);
-Waiting := TWait.Create('Exemplifying the wait screen', FrmSample);
-Waiting := TWait.Create('Exemplifying the wait screen');
-``` 
+![wait-vcl](img/Screenshot_1.png)
 
 You can increment more than one:
 
 ```
-for I := 1 to 50 do
-begin
-  Sleep(50);
-  Waiting.ProgressBar.Step(2);
-end;
+Waiting.ProgressBar.Step(2);
 ``` 
+
+The Start function will create a thread to execute the procedure passed as parameter. Within a thread should not be made interactions with the user! If you need to, use a TThread.Synchronize.
 
 #### Form without progress bar
 ```
-var
-  Waiting: IWait;
 begin
-  Waiting := TWait.Create('Exemplifying the wait screen');
-  Sleep(3000); // Your code...
+  TWait.Create('Aguarde...').Start(
+    procedure
+    begin
+      Sleep(1500); // Your code here!!!
+    end);
 end;
 ```
+![wait-vcl](img/Screenshot_2.png)

@@ -7,6 +7,7 @@ uses System.Classes, FireDAC.Comp.Client, Winapi.Windows;
 type
   TDirectoryUtils = class
   private
+    class function ValidateExtension(const Extension: string): Boolean;
     class function AddDirectorySeparator(const Root: string): string;
   public
     class procedure UpdateFiles(const DataSet: TFDMemTable);
@@ -14,11 +15,13 @@ type
     class function ValidateFileName(const DataSet: TFDMemTable): Boolean;
     class procedure GetSubDirectorys(const Directory: string; var DirectoryList: TStrings);
     class procedure ListAllFiles(const Directorys: TStrings; const DataSet: TFDMemTable);
+    class procedure ReplaceFileName(const OldValue, NewValue: string; const DataSet: TFDMemTable);
+    class procedure LoadNewFileName(const DataSet: TFDMemTable);
   end;
 
 implementation
 
-uses System.SysUtils, VCL.Wait.Intf, VCL.Wait, VCL.StdCtrls, Vcl.Forms;
+uses System.SysUtils, VCL.Wait, VCL.StdCtrls, Vcl.Forms, System.StrUtils;
 
 var
   Extensions: array [0 .. 1] of string = (
@@ -65,38 +68,38 @@ end;
 
 class procedure TDirectoryUtils.ListAllFiles(const Directorys: TStrings; const DataSet: TFDMemTable);
 var
-  I: Integer;
   Search: TSearchRec;
-  Waiting: IWait;
 begin
-  Waiting := TWait.Create('Searching files...');
-  for I := 0 to Pred(Directorys.Count) do
-    if FindFirst(Directorys[I] + '\*.*', faAnyFile, Search) = 0 then
-    begin
-      repeat
-        if (Search.Attr <> faDirectory) then
-        begin
-          DataSet.Append;
-          DataSet.FieldByName('DIRECTORY').AsString := Directorys[I];
-          DataSet.FieldByName('EXTENSION').AsString := ExtractFileExt(Search.Name);
-          DataSet.FieldByName('OLD_FILE_NAME').AsString := ChangeFileExt(Search.Name, EmptyStr);
-          DataSet.Post;
-        end;
-      until FindNext(Search) <> 0;
-      FindClose(Search);
-    end;
+  DataSet.DisableControls;
+  try
+    TWait.Create('Searching files...').Start(
+      procedure
+      var
+        I: Integer;
+      begin
+        for I := 0 to Pred(Directorys.Count) do
+          if FindFirst(Directorys[I] + '\*.*', faAnyFile, Search) = 0 then
+          begin
+            repeat
+              if (Search.Attr <> faDirectory) then
+              begin
+                DataSet.Append;
+                DataSet.FieldByName('DIRECTORY').AsString := Directorys[I];
+                DataSet.FieldByName('EXTENSION').AsString := ExtractFileExt(Search.Name);
+                DataSet.FieldByName('OLD_FILE_NAME').AsString := ChangeFileExt(Search.Name, EmptyStr);
+                DataSet.Post;
+              end;
+            until FindNext(Search) <> 0;
+            FindClose(Search);
+          end;
+        end);
+  finally
+    DataSet.EnableControls;
+  end;
 end;
 
-class function TDirectoryUtils.RenameFiles(const DataSet: TFDMemTable): Boolean;
-var
-  I: Integer;
-  Waiting: IWait;
-  OldFile, NewFile: string;
+class procedure TDirectoryUtils.LoadNewFileName(const DataSet: TFDMemTable);
 begin
-  Waiting := TWait.Create('Renaming files...');
-  Waiting.ShowProgressBar(True);
-  Waiting.ProgressBar.SetMax(DataSet.RecordCount);
-  Waiting.ProgressBar.SetPosition(0);
   DataSet.DisableControls;
   try
     DataSet.First;
@@ -104,19 +107,67 @@ begin
     begin
       if DataSet.FieldByName('NEW_FILE_NAME').AsString.Trim.IsEmpty then
       begin
-        DataSet.Next;
-        Continue;
+        DataSet.Edit;
+        DataSet.FieldByName('NEW_FILE_NAME').AsString := DataSet.FieldByName('OLD_FILE_NAME').AsString;
+        DataSet.Post;
       end;
-      OldFile := DataSet.FieldByName('DIRECTORY').AsString + '\' + DataSet.FieldByName('OLD_FILE_NAME').AsString;
-      NewFile := DataSet.FieldByName('DIRECTORY').AsString + '\' + DataSet.FieldByName('NEW_FILE_NAME').AsString;
-      for I := 0 to 1 do
-        if FileExists(OldFile + Extensions[I]) then
-          RenameFile(OldFile + Extensions[I], NewFile + Extensions[I]);
-      Waiting.ProgressBar.Step;
-      Application.ProcessMessages;
       DataSet.Next;
     end;
+  finally
+    DataSet.EnableControls;
+  end;
+end;
+
+class function TDirectoryUtils.RenameFiles(const DataSet: TFDMemTable): Boolean;
+var
+  Waiting: TWait;
+  OldFile, NewFile: string;
+begin
+  Waiting := TWait.Create('Renaming files...');
+  Waiting.ProgressBar.SetMax(DataSet.RecordCount);
+  DataSet.DisableControls;
+  DataSet.Filtered := False;
+  try
+    Waiting.Start(
+      procedure
+      var
+        I: Integer;
+      begin
+        DataSet.First;
+        while not DataSet.Eof do
+        begin
+          if DataSet.FieldByName('NEW_FILE_NAME').AsString.Trim.IsEmpty then
+          begin
+            DataSet.Next;
+            Continue;
+          end;
+          OldFile := DataSet.FieldByName('DIRECTORY').AsString + '\' + DataSet.FieldByName('OLD_FILE_NAME').AsString;
+          NewFile := DataSet.FieldByName('DIRECTORY').AsString + '\' + DataSet.FieldByName('NEW_FILE_NAME').AsString;
+          for I := 0 to 1 do
+            if FileExists(OldFile + Extensions[I]) then
+              RenameFile(OldFile + Extensions[I], NewFile + Extensions[I]);
+          Waiting.ProgressBar.Step;
+          DataSet.Next;
+        end;
+      end);
     Result := True;
+  finally
+    DataSet.EnableControls;
+  end;
+end;
+
+class procedure TDirectoryUtils.ReplaceFileName(const OldValue, NewValue: string; const DataSet: TFDMemTable);
+begin
+  DataSet.DisableControls;
+  try
+    DataSet.First;
+    while not DataSet.Eof do
+    begin
+      DataSet.Edit;
+      DataSet.FieldByName('NEW_FILE_NAME').AsString := StringReplace(DataSet.FieldByName('NEW_FILE_NAME').AsString, OldValue, NewValue, [rfReplaceAll]);
+      DataSet.Post;
+      DataSet.Next;
+    end;
   finally
     DataSet.EnableControls;
   end;
@@ -124,48 +175,52 @@ end;
 
 class procedure TDirectoryUtils.UpdateFiles(const DataSet: TFDMemTable);
 var
-  Waiting: IWait;
+  Waiting: TWait;
   mtClone: TFDMemTable;
   Archive: TStrings;
   Directory: string;
 begin
   Waiting := TWait.Create('Updating files...');
-  Waiting.ShowProgressBar(True);
-  Waiting.ProgressBar.SetPosition(0);
+  Waiting.ProgressBar.SetMax(DataSet.RecordCount);
   mtClone := TFDMemTable.Create(nil);
   DataSet.DisableControls;
   try
-    DataSet.Filtered := False;
-    Waiting.ProgressBar.SetMax(DataSet.RecordCount);
-    mtClone.CloneCursor(DataSet);
-    DataSet.First;
-    while not DataSet.Eof do
-    begin
-      Waiting.SetContent('Updating files ' + DataSet.RecNo.ToString + ' of ' + DataSet.RecordCount.ToString + '...');
-      if not DataSet.FieldByName('NEW_FILE_NAME').AsString.Trim.IsEmpty then
+    Waiting.Start(
+      procedure
       begin
-        mtClone.First;
-        while not mtClone.Eof do
+        mtClone.CloneCursor(DataSet);
+        DataSet.First;
+        while not DataSet.Eof do
         begin
-          if not mtClone.FieldByName('NEW_FILE_NAME').AsString.IsEmpty then
+          Waiting.SetContent('Updating files ' + DataSet.RecNo.ToString + ' of ' + DataSet.RecordCount.ToString + '...');
+          if not DataSet.FieldByName('NEW_FILE_NAME').AsString.Trim.IsEmpty then
           begin
-            Archive := TStringList.Create;
-            try
-              Directory := DataSet.FieldByName('DIRECTORY').AsString + '\' + DataSet.FieldByName('NEW_FILE_NAME').AsString + DataSet.FieldByName('EXTENSION').AsString;
-              Archive.LoadFromFile(Directory);
-              Archive.Text := StringReplace(Archive.Text, mtClone.FieldByName('OLD_FILE_NAME').AsString, mtClone.FieldByName('NEW_FILE_NAME').AsString, [rfReplaceAll, rfIgnoreCase]);
-              Archive.SaveToFile(Directory);
-            finally
-              Archive.Free;
+            mtClone.First;
+            while not mtClone.Eof do
+            begin
+              if not ValidateExtension(mtClone.FieldByName('EXTENSION').AsString) then
+              begin
+                mtClone.Next;
+                Continue;
+              end;
+              Archive := TStringList.Create;
+              try
+                Directory := mtClone.FieldByName('DIRECTORY').AsString + '\' + mtClone.FieldByName('OLD_FILE_NAME').AsString + mtClone.FieldByName('EXTENSION').AsString;
+                if not mtClone.FieldByName('NEW_FILE_NAME').AsString.Trim.IsEmpty then
+                  Directory := mtClone.FieldByName('DIRECTORY').AsString + '\' + mtClone.FieldByName('NEW_FILE_NAME').AsString + mtClone.FieldByName('EXTENSION').AsString;
+                Archive.LoadFromFile(Directory);
+                Archive.Text := StringReplace(Archive.Text, DataSet.FieldByName('OLD_FILE_NAME').AsString, DataSet.FieldByName('NEW_FILE_NAME').AsString, [rfReplaceAll, rfIgnoreCase]);
+                Archive.SaveToFile(Directory);
+              finally
+                Archive.Free;
+              end;
+              mtClone.Next;
             end;
           end;
-          mtClone.Next;
+          Waiting.ProgressBar.Step;
+          DataSet.Next;
         end;
-      end;
-      Waiting.ProgressBar.Step;
-      Application.ProcessMessages;
-      DataSet.Next;
-    end;
+      end);
   finally
     DataSet.Filtered := True;
     DataSet.EnableControls;
@@ -173,43 +228,57 @@ begin
   end;
 end;
 
+class function TDirectoryUtils.ValidateExtension(const Extension: string): Boolean;
+begin
+  case AnsiIndexStr(Extension.ToLower, ['.pas', '.dfm', '.dpr', '.dproj']) of
+    0..3:
+      Result := True;
+    else
+      Result := False;
+  end;
+end;
+
 class function TDirectoryUtils.ValidateFileName(const DataSet: TFDMemTable): Boolean;
 var
-  Waiting: IWait;
+  Validate: Boolean;
   mtClone: TFDMemTable;
 begin
-  Result := True;
-  Waiting := TWait.Create('Validating file name...');
+  Validate := True;
   DataSet.DisableControls;
   mtClone := TFDMemTable.Create(nil);
   try
-    DataSet.First;
-    mtClone.CloneCursor(DataSet);
-    while not DataSet.Eof do
-    begin
-      mtClone.First;
-      while not mtClone.Eof do
+    TWait.Create('Validating file name...').Start(
+      procedure
       begin
-        if not mtClone.FieldByName('NEW_FILE_NAME').AsString.Trim.IsEmpty then
-          if (mtClone.FieldByName('NEW_FILE_NAME').AsString.Equals(DataSet.FieldByName('NEW_FILE_NAME').AsString) or
-            mtClone.FieldByName('OLD_FILE_NAME').AsString.Equals(DataSet.FieldByName('NEW_FILE_NAME').AsString) or
-            mtClone.FieldByName('NEW_FILE_NAME').AsString.Equals(DataSet.FieldByName('OLD_FILE_NAME').AsString) or
-            mtClone.FieldByName('OLD_FILE_NAME').AsString.Equals(DataSet.FieldByName('OLD_FILE_NAME').AsString)) and
-            mtClone.FieldByName('DIRECTORY').AsString.Equals(DataSet.FieldByName('DIRECTORY').AsString) and
-            (mtClone.RecNo <> DataSet.RecNo) then
+        DataSet.First;
+        mtClone.CloneCursor(DataSet);
+        while not DataSet.Eof do
+        begin
+          mtClone.First;
+          while not mtClone.Eof do
           begin
-            Result := False;
-            DataSet.Edit;
-            DataSet.FieldByName('RENAME').AsString := 'S';
-            DataSet.Post;
+            if not mtClone.FieldByName('NEW_FILE_NAME').AsString.Trim.IsEmpty then
+              if (mtClone.FieldByName('NEW_FILE_NAME').AsString.Equals(DataSet.FieldByName('NEW_FILE_NAME').AsString) or
+                mtClone.FieldByName('OLD_FILE_NAME').AsString.Equals(DataSet.FieldByName('NEW_FILE_NAME').AsString) or
+                mtClone.FieldByName('NEW_FILE_NAME').AsString.Equals(DataSet.FieldByName('OLD_FILE_NAME').AsString) or
+                mtClone.FieldByName('OLD_FILE_NAME').AsString.Equals(DataSet.FieldByName('OLD_FILE_NAME').AsString)) and
+                mtClone.FieldByName('DIRECTORY').AsString.Equals(DataSet.FieldByName('DIRECTORY').AsString) and
+                (mtClone.RecNo <> DataSet.RecNo) then
+              begin
+                Validate := False;
+                DataSet.Edit;
+                DataSet.FieldByName('RENAME').AsString := 'S';
+                DataSet.Post;
+              end;
+            mtClone.Next;
           end;
-        mtClone.Next;
-      end;
-      DataSet.Next;
-    end;
+          DataSet.Next;
+        end;
+      end);
   finally
     mtClone.Free;
     DataSet.EnableControls;
+    Result := Validate;
   end;
 end;
 
