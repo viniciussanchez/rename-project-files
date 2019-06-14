@@ -177,8 +177,8 @@ class procedure TDirectoryUtils.UpdateFiles(const DataSet: TFDMemTable);
 var
   Waiting: TWait;
   mtClone: TFDMemTable;
-  Archive: TStrings;
   Directory: string;
+  Archive: TStrings;
 begin
   Waiting := TWait.Create('Updating files...');
   Waiting.ProgressBar.SetMax(DataSet.RecordCount);
@@ -196,25 +196,25 @@ begin
           if not DataSet.FieldByName('NEW_FILE_NAME').AsString.Trim.IsEmpty then
           begin
             mtClone.First;
-            while not mtClone.Eof do
-            begin
-              if not ValidateExtension(mtClone.FieldByName('EXTENSION').AsString) then
+            Archive := TStringList.Create;
+            try
+              while not mtClone.Eof do
               begin
-                mtClone.Next;
-                Continue;
-              end;
-              Archive := TStringList.Create;
-              try
+                if not ValidateExtension(mtClone.FieldByName('EXTENSION').AsString) then
+                begin
+                  mtClone.Next;
+                  Continue;
+                end;
                 Directory := mtClone.FieldByName('DIRECTORY').AsString + '\' + mtClone.FieldByName('OLD_FILE_NAME').AsString + mtClone.FieldByName('EXTENSION').AsString;
                 if not mtClone.FieldByName('NEW_FILE_NAME').AsString.Trim.IsEmpty then
                   Directory := mtClone.FieldByName('DIRECTORY').AsString + '\' + mtClone.FieldByName('NEW_FILE_NAME').AsString + mtClone.FieldByName('EXTENSION').AsString;
                 Archive.LoadFromFile(Directory);
                 Archive.Text := StringReplace(Archive.Text, DataSet.FieldByName('OLD_FILE_NAME').AsString, DataSet.FieldByName('NEW_FILE_NAME').AsString, [rfReplaceAll, rfIgnoreCase]);
                 Archive.SaveToFile(Directory);
-              finally
-                Archive.Free;
+                mtClone.Next;
               end;
-              mtClone.Next;
+            finally
+              FreeAndNil(Archive);
             end;
           end;
           Waiting.ProgressBar.Step;
@@ -224,7 +224,7 @@ begin
   finally
     DataSet.Filtered := True;
     DataSet.EnableControls;
-    mtClone.Free;
+    FreeAndNil(mtClone);
   end;
 end;
 
@@ -276,7 +276,7 @@ begin
         end;
       end);
   finally
-    mtClone.Free;
+    FreeAndNil(mtClone);
     DataSet.EnableControls;
     Result := Validate;
   end;

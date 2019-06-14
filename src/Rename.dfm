@@ -90,7 +90,6 @@ object FrmMain: TFrmMain
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitTop = 453
       DesignSize = (
         984
         37)
@@ -221,7 +220,6 @@ object FrmMain: TFrmMain
       Color = cl3DLight
       ParentBackground = False
       TabOrder = 4
-      ExplicitTop = 418
       DesignSize = (
         984
         33)

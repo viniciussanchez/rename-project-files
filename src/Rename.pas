@@ -68,14 +68,13 @@ procedure TFrmMain.btnFilterClick(Sender: TObject);
 begin
   if not mtFiles.Active then
     Exit;
-  mtFiles.Filtered := False;
-  if not Trim(edtFilterFileName.Text).IsEmpty then
-  begin
+  if Trim(edtFilterFileName.Text).IsEmpty then
+    mtFiles.Filter := 'EXTENSION = ''.pas'''
+  else
     mtFiles.Filter :=
-      'Lower(OLD_FILE_NAME) like ' + QuotedStr('%' + Trim(edtFilterFileName.Text).ToLower + '%') +
-      ' or Lower(NEW_FILE_NAME) like ' + QuotedStr('%' + Trim(edtFilterFileName.Text).ToLower + '%');
-    mtFiles.Filtered := True;
-  end;
+      'EXTENSION = ''.pas'' and (Lower(OLD_FILE_NAME) like ' + QuotedStr('%' + Trim(edtFilterFileName.Text).ToLower + '%') +
+      ' or Lower(NEW_FILE_NAME) like ' + QuotedStr('%' + Trim(edtFilterFileName.Text).ToLower + '%') + ')';
+  mtFiles.Filtered := True;
 end;
 
 procedure TFrmMain.btnReplaceClick(Sender: TObject);
