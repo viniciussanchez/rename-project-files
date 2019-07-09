@@ -97,6 +97,7 @@ begin
       DirectoryList.Add(Directory);
       TDirectoryUtils.GetSubDirectorys(Directory, DirectoryList);
       TDirectoryUtils.ListAllFiles(DirectoryList, mtFiles);
+      TDirectoryUtils.SetOldClassName(mtFiles);
     finally
       DirectoryList.Free;
     end;

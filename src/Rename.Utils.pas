@@ -17,6 +17,7 @@ type
     class procedure ListAllFiles(const Directorys: TStrings; const DataSet: TFDMemTable);
     class procedure ReplaceFileName(const OldValue, NewValue: string; const DataSet: TFDMemTable);
     class procedure LoadNewFileName(const DataSet: TFDMemTable);
+    class procedure SetOldClassName(const DataSet: TFDMemTable);
   end;
 
 implementation
@@ -51,7 +52,7 @@ begin
     SearchPath := AddDirectorySeparator(Directory);
     if FindFirst(SearchPath + '*', faDirectory, Search) = 0 then
       repeat
-        if ((Search.Attr and faDirectory) = faDirectory) and (Search.Name <> '.') and (Search.Name <> '..') then
+        if ((Search.Attr and faDirectory) = faDirectory) and (Search.Name <> 'modules') and (Search.Name <> '.') and (Search.Name <> '..') then
         begin
           DirectoryList.Add(SearchPath + Search.Name);
           SubDirectoryList.Add(SearchPath + Search.Name);
@@ -173,6 +174,63 @@ begin
   end;
 end;
 
+class procedure TDirectoryUtils.SetOldClassName(const DataSet: TFDMemTable);
+var
+  Waiting: TWait;
+  Directory, OldClassName: string;
+  Archive: TStrings;
+  IsName: Boolean;
+begin
+  DataSet.DisableControls;
+  Archive := TStringList.Create;
+  Waiting := TWait.Create('Waiting...');
+  Waiting.ProgressBar.SetMax(DataSet.RecordCount);
+  try
+    Waiting.Start(
+      procedure
+      var
+        I: Integer;
+      begin
+        DataSet.First;
+        while not DataSet.Eof do
+        begin
+          Waiting.SetContent('Waiting: File ' + DataSet.RecNo.ToString + ' of ' + DataSet.RecordCount.ToString + '...');
+          Directory := DataSet.FieldByName('DIRECTORY').AsString + '\' + DataSet.FieldByName('OLD_FILE_NAME').AsString + '.dfm';
+          if FileExists(Directory) then
+          begin
+            IsName := False;
+            OldClassName := EmptyStr;
+            Archive.LoadFromFile(Directory);
+            for I := 0 to Pred(Archive.Text.Length) do
+            begin
+              if Archive.Text[I] = ' ' then
+              begin
+                IsName := True;
+                Continue;
+              end;
+              if Archive.Text[I] = ':' then
+              begin
+                DataSet.Edit;
+                DataSet.FieldByName('OLD_CLASS_NAME').AsString := OldClassName;
+                DataSet.Post;
+                Break;
+              end;
+              if IsName then
+                OldClassName := OldClassName + Archive.Text[I];
+            end;
+            Archive.SaveToFile(Directory);
+          end;
+          Waiting.ProgressBar.Step;
+          DataSet.Next;
+        end;
+      end);
+  finally
+    DataSet.Filtered := True;
+    DataSet.EnableControls;
+    Archive.Free;
+  end;
+end;
+
 class procedure TDirectoryUtils.UpdateFiles(const DataSet: TFDMemTable);
 var
   Waiting: TWait;
@@ -193,7 +251,7 @@ begin
         while not DataSet.Eof do
         begin
           Waiting.SetContent('Updating files ' + DataSet.RecNo.ToString + ' of ' + DataSet.RecordCount.ToString + '...');
-          if not DataSet.FieldByName('NEW_FILE_NAME').AsString.Trim.IsEmpty then
+          if (not DataSet.FieldByName('NEW_FILE_NAME').AsString.Trim.IsEmpty) or (not DataSet.FieldByName('NEW_CLASS_NAME').AsString.Trim.IsEmpty) then
           begin
             mtClone.First;
             Archive := TStringList.Create;
@@ -208,9 +266,16 @@ begin
                 Directory := mtClone.FieldByName('DIRECTORY').AsString + '\' + mtClone.FieldByName('OLD_FILE_NAME').AsString + mtClone.FieldByName('EXTENSION').AsString;
                 if not mtClone.FieldByName('NEW_FILE_NAME').AsString.Trim.IsEmpty then
                   Directory := mtClone.FieldByName('DIRECTORY').AsString + '\' + mtClone.FieldByName('NEW_FILE_NAME').AsString + mtClone.FieldByName('EXTENSION').AsString;
-                Archive.LoadFromFile(Directory);
-                Archive.Text := StringReplace(Archive.Text, DataSet.FieldByName('OLD_FILE_NAME').AsString, DataSet.FieldByName('NEW_FILE_NAME').AsString, [rfReplaceAll, rfIgnoreCase]);
-                Archive.SaveToFile(Directory);
+                try
+                  Archive.LoadFromFile(Directory);
+                  if not DataSet.FieldByName('NEW_FILE_NAME').AsString.Trim.IsEmpty then
+                    Archive.Text := StringReplace(Archive.Text, DataSet.FieldByName('OLD_FILE_NAME').AsString, DataSet.FieldByName('NEW_FILE_NAME').AsString, [rfReplaceAll, rfIgnoreCase]);
+                  if not DataSet.FieldByName('NEW_CLASS_NAME').AsString.Trim.IsEmpty then
+                    Archive.Text := StringReplace(Archive.Text, DataSet.FieldByName('OLD_CLASS_NAME').AsString, DataSet.FieldByName('NEW_CLASS_NAME').AsString, [rfReplaceAll, rfIgnoreCase]);
+                  Archive.SaveToFile(Directory);
+                except
+                  { TODO -oAll -cImplementation : handler exception }
+                end;
                 mtClone.Next;
               end;
             finally
