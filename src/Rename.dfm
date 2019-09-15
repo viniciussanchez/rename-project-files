@@ -183,15 +183,11 @@ object FrmMain: TFrmMain
       Top = 357
       Width = 984
       Height = 94
-      ActivePage = TabSheet2
+      ActivePage = TabSheet1
       Align = alBottom
       TabOrder = 3
       object TabSheet1: TTabSheet
         Caption = 'File name'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 165
         object Panel4: TPanel
           Left = 0
           Top = 33
@@ -202,8 +198,6 @@ object FrmMain: TFrmMain
           Color = cl3DLight
           ParentBackground = False
           TabOrder = 0
-          ExplicitTop = 418
-          ExplicitWidth = 984
           DesignSize = (
             976
             33)
@@ -245,8 +239,6 @@ object FrmMain: TFrmMain
           Color = cl3DLight
           ParentBackground = False
           TabOrder = 1
-          ExplicitLeft = 9
-          ExplicitTop = 44
           DesignSize = (
             976
             33)
@@ -281,7 +273,7 @@ object FrmMain: TFrmMain
             Height = 25
             Anchors = [akTop, akRight]
             Caption = 'Replace'
-            TabOrder = 1
+            TabOrder = 2
             OnClick = btnReplaceClick
           end
           object edtReplace: TEdit
@@ -290,7 +282,7 @@ object FrmMain: TFrmMain
             Width = 269
             Height = 21
             Anchors = [akTop, akRight]
-            TabOrder = 2
+            TabOrder = 1
             TextHint = 'Type new value...'
           end
         end
@@ -383,7 +375,7 @@ object FrmMain: TFrmMain
             Height = 25
             Anchors = [akTop, akRight]
             Caption = 'Replace'
-            TabOrder = 1
+            TabOrder = 2
             OnClick = Button6Click
           end
           object edtReplaceClassName: TEdit
@@ -392,7 +384,7 @@ object FrmMain: TFrmMain
             Width = 269
             Height = 21
             Anchors = [akTop, akRight]
-            TabOrder = 2
+            TabOrder = 1
             TextHint = 'Type new value...'
           end
         end
