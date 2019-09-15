@@ -5,7 +5,7 @@ interface
 uses Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
   Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error,
   FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Grids, Vcl.DBGrids,
-  FireDAC.Stan.ExprFuncs;
+  FireDAC.Stan.ExprFuncs, Vcl.ComCtrls;
 
 type
   TFrmMain = class(TForm)
@@ -28,6 +28,9 @@ type
     Label1: TLabel;
     edtDirectory: TEdit;
     btnSearch: TButton;
+    Button4: TButton;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
     Panel4: TPanel;
     Label2: TLabel;
     edtFilterFileName: TEdit;
@@ -38,7 +41,18 @@ type
     edtTextFind: TEdit;
     btnReplace: TButton;
     edtReplace: TEdit;
-    Button4: TButton;
+    TabSheet2: TTabSheet;
+    Panel6: TPanel;
+    Label3: TLabel;
+    edtFilterClassName: TEdit;
+    Button5: TButton;
+    Panel7: TPanel;
+    Label6: TLabel;
+    Label7: TLabel;
+    edtTextFindClassName: TEdit;
+    Button6: TButton;
+    edtReplaceClassName: TEdit;
+    Button7: TButton;
     procedure btnSearchClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -51,6 +65,9 @@ type
     procedure btnReplaceClick(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure edtFilterFileNameKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure Button7Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
   private
     function GetDataFileName: string;
   end;
@@ -179,6 +196,31 @@ end;
 procedure TFrmMain.Button4Click(Sender: TObject);
 begin
   TDirectoryUtils.LoadNewFileName(mtFiles);
+end;
+
+procedure TFrmMain.Button5Click(Sender: TObject);
+begin
+  if not mtFiles.Active then
+    Exit;
+  if Trim(edtFilterFileName.Text).IsEmpty then
+    mtFiles.Filter := 'EXTENSION = ''.pas'''
+  else
+    mtFiles.Filter :=
+      'EXTENSION = ''.pas'' and (Lower(OLD_CLASS_NAME) like ' + QuotedStr('%' + Trim(edtFilterClassName.Text).ToLower + '%') +
+      ' or Lower(NEW_CLASS_NAME) like ' + QuotedStr('%' + Trim(edtFilterClassName.Text).ToLower + '%') + ')';
+  mtFiles.Filtered := True;
+end;
+
+procedure TFrmMain.Button6Click(Sender: TObject);
+begin
+  if Trim(edtTextFindClassName.Text).IsEmpty or mtFiles.IsEmpty then
+    Exit;
+  TDirectoryUtils.ReplaceClassName(edtTextFindClassName.Text, edtReplaceClassName.Text, mtFiles);
+end;
+
+procedure TFrmMain.Button7Click(Sender: TObject);
+begin
+  TDirectoryUtils.LoadNewClassName(mtFiles);
 end;
 
 procedure TFrmMain.DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);

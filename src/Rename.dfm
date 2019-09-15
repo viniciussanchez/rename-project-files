@@ -26,7 +26,7 @@ object FrmMain: TFrmMain
       Left = 0
       Top = 41
       Width = 984
-      Height = 344
+      Height = 316
       Align = alClient
       DataSource = dsFiles
       TabOrder = 0
@@ -124,11 +124,20 @@ object FrmMain: TFrmMain
       object Button4: TButton
         Left = 215
         Top = 6
-        Width = 218
+        Width = 258
         Height = 25
-        Caption = 'Copy the old name to the new name'
+        Caption = 'Copy the old file name to the new file name'
         TabOrder = 3
         OnClick = Button4Click
+      end
+      object Button7: TButton
+        Left = 479
+        Top = 6
+        Width = 258
+        Height = 25
+        Caption = 'Copy the old class name to the new class name'
+        TabOrder = 4
+        OnClick = Button7Click
       end
     end
     object Panel3: TPanel
@@ -169,102 +178,224 @@ object FrmMain: TFrmMain
         OnClick = btnSearchClick
       end
     end
-    object Panel4: TPanel
+    object PageControl1: TPageControl
       Left = 0
-      Top = 418
+      Top = 357
       Width = 984
-      Height = 33
+      Height = 94
+      ActivePage = TabSheet2
       Align = alBottom
-      BevelOuter = bvSpace
-      Color = cl3DLight
-      ParentBackground = False
       TabOrder = 3
-      DesignSize = (
-        984
-        33)
-      object Label2: TLabel
-        Left = 9
-        Top = 10
-        Width = 90
-        Height = 13
-        Caption = 'File name to find:'
+      object TabSheet1: TTabSheet
+        Caption = 'File name'
+        ExplicitHeight = 165
+        object Panel4: TPanel
+          Left = 0
+          Top = 33
+          Width = 976
+          Height = 33
+          Align = alBottom
+          BevelOuter = bvSpace
+          Color = cl3DLight
+          ParentBackground = False
+          TabOrder = 0
+          ExplicitTop = 418
+          ExplicitWidth = 984
+          DesignSize = (
+            976
+            33)
+          object Label2: TLabel
+            Left = 9
+            Top = 10
+            Width = 90
+            Height = 13
+            Caption = 'File name to find:'
+          end
+          object edtFilterFileName: TEdit
+            Left = 105
+            Top = 6
+            Width = 765
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 0
+            TextHint = 'Type file name...'
+            OnKeyDown = edtFilterFileNameKeyDown
+          end
+          object btnFilter: TButton
+            Left = 876
+            Top = 4
+            Width = 97
+            Height = 25
+            Anchors = [akTop, akRight]
+            Caption = 'Filter'
+            TabOrder = 1
+            OnClick = btnFilterClick
+          end
+        end
+        object Panel5: TPanel
+          Left = 0
+          Top = 0
+          Width = 976
+          Height = 33
+          Align = alBottom
+          BevelOuter = bvSpace
+          Color = cl3DLight
+          ParentBackground = False
+          TabOrder = 1
+          ExplicitLeft = 9
+          ExplicitTop = 44
+          DesignSize = (
+            976
+            33)
+          object Label4: TLabel
+            Left = 39
+            Top = 10
+            Width = 61
+            Height = 13
+            Caption = 'Text to find:'
+          end
+          object Label5: TLabel
+            Left = 526
+            Top = 10
+            Width = 69
+            Height = 13
+            Anchors = [akTop, akRight]
+            Caption = 'Replace with:'
+          end
+          object edtTextFind: TEdit
+            Left = 105
+            Top = 6
+            Width = 415
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 0
+            TextHint = 'Type text...'
+          end
+          object btnReplace: TButton
+            Left = 876
+            Top = 4
+            Width = 97
+            Height = 25
+            Anchors = [akTop, akRight]
+            Caption = 'Replace'
+            TabOrder = 1
+            OnClick = btnReplaceClick
+          end
+          object edtReplace: TEdit
+            Left = 601
+            Top = 6
+            Width = 269
+            Height = 21
+            Anchors = [akTop, akRight]
+            TabOrder = 2
+            TextHint = 'Type new value...'
+          end
+        end
       end
-      object edtFilterFileName: TEdit
-        Left = 105
-        Top = 6
-        Width = 765
-        Height = 21
-        Anchors = [akLeft, akTop, akRight]
-        TabOrder = 0
-        TextHint = 'Type file name...'
-        OnKeyDown = edtFilterFileNameKeyDown
-      end
-      object btnFilter: TButton
-        Left = 876
-        Top = 4
-        Width = 97
-        Height = 25
-        Anchors = [akTop, akRight]
-        Caption = 'Filter'
-        TabOrder = 1
-        OnClick = btnFilterClick
-      end
-    end
-    object Panel5: TPanel
-      Left = 0
-      Top = 385
-      Width = 984
-      Height = 33
-      Align = alBottom
-      BevelOuter = bvSpace
-      Color = cl3DLight
-      ParentBackground = False
-      TabOrder = 4
-      DesignSize = (
-        984
-        33)
-      object Label4: TLabel
-        Left = 39
-        Top = 10
-        Width = 60
-        Height = 13
-        Caption = 'Text to find:'
-      end
-      object Label5: TLabel
-        Left = 526
-        Top = 10
-        Width = 69
-        Height = 13
-        Anchors = [akTop, akRight]
-        Caption = 'Replace with:'
-      end
-      object edtTextFind: TEdit
-        Left = 105
-        Top = 6
-        Width = 415
-        Height = 21
-        Anchors = [akLeft, akTop, akRight]
-        TabOrder = 0
-        TextHint = 'Type text...'
-      end
-      object btnReplace: TButton
-        Left = 876
-        Top = 4
-        Width = 97
-        Height = 25
-        Anchors = [akTop, akRight]
-        Caption = 'Replace'
-        TabOrder = 1
-        OnClick = btnReplaceClick
-      end
-      object edtReplace: TEdit
-        Left = 601
-        Top = 6
-        Width = 269
-        Height = 21
-        Anchors = [akTop, akRight]
-        TabOrder = 2
-        TextHint = 'Type new value...'
+      object TabSheet2: TTabSheet
+        Caption = 'Class name'
+        ImageIndex = 1
+        object Panel6: TPanel
+          Left = 0
+          Top = 33
+          Width = 976
+          Height = 33
+          Align = alBottom
+          BevelOuter = bvSpace
+          Color = cl3DLight
+          ParentBackground = False
+          TabOrder = 0
+          ExplicitTop = 418
+          ExplicitWidth = 984
+          DesignSize = (
+            976
+            33)
+          object Label3: TLabel
+            Left = 9
+            Top = 10
+            Width = 98
+            Height = 13
+            Caption = 'Class name to find:'
+          end
+          object edtFilterClassName: TEdit
+            Left = 113
+            Top = 6
+            Width = 757
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 0
+            TextHint = 'Type class name...'
+            OnKeyDown = edtFilterFileNameKeyDown
+          end
+          object Button5: TButton
+            Left = 876
+            Top = 4
+            Width = 97
+            Height = 25
+            Anchors = [akTop, akRight]
+            Caption = 'Filter'
+            TabOrder = 1
+            OnClick = Button5Click
+          end
+        end
+        object Panel7: TPanel
+          Left = 0
+          Top = 0
+          Width = 976
+          Height = 33
+          Align = alBottom
+          BevelOuter = bvSpace
+          Color = cl3DLight
+          ParentBackground = False
+          TabOrder = 1
+          ExplicitTop = 8
+          DesignSize = (
+            976
+            33)
+          object Label6: TLabel
+            Left = 46
+            Top = 10
+            Width = 61
+            Height = 13
+            Caption = 'Text to find:'
+          end
+          object Label7: TLabel
+            Left = 526
+            Top = 10
+            Width = 69
+            Height = 13
+            Anchors = [akTop, akRight]
+            Caption = 'Replace with:'
+          end
+          object edtTextFindClassName: TEdit
+            Left = 113
+            Top = 6
+            Width = 407
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 0
+            TextHint = 'Type text...'
+          end
+          object Button6: TButton
+            Left = 876
+            Top = 4
+            Width = 97
+            Height = 25
+            Anchors = [akTop, akRight]
+            Caption = 'Replace'
+            TabOrder = 1
+            OnClick = Button6Click
+          end
+          object edtReplaceClassName: TEdit
+            Left = 601
+            Top = 6
+            Width = 269
+            Height = 21
+            Anchors = [akTop, akRight]
+            TabOrder = 2
+            TextHint = 'Type new value...'
+          end
+        end
       end
     end
   end

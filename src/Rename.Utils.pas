@@ -16,7 +16,9 @@ type
     class procedure GetSubDirectorys(const Directory: string; var DirectoryList: TStrings);
     class procedure ListAllFiles(const Directorys: TStrings; const DataSet: TFDMemTable);
     class procedure ReplaceFileName(const OldValue, NewValue: string; const DataSet: TFDMemTable);
+    class procedure ReplaceClassName(const OldValue, NewValue: string; const DataSet: TFDMemTable);
     class procedure LoadNewFileName(const DataSet: TFDMemTable);
+    class procedure LoadNewClassName(const DataSet: TFDMemTable);
     class procedure SetOldClassName(const DataSet: TFDMemTable);
   end;
 
@@ -99,6 +101,26 @@ begin
   end;
 end;
 
+class procedure TDirectoryUtils.LoadNewClassName(const DataSet: TFDMemTable);
+begin
+  DataSet.DisableControls;
+  try
+    DataSet.First;
+    while not DataSet.Eof do
+    begin
+      if DataSet.FieldByName('NEW_CLASS_NAME').AsString.Trim.IsEmpty then
+      begin
+        DataSet.Edit;
+        DataSet.FieldByName('NEW_CLASS_NAME').AsString := DataSet.FieldByName('OLD_CLASS_NAME').AsString;
+        DataSet.Post;
+      end;
+      DataSet.Next;
+    end;
+  finally
+    DataSet.EnableControls;
+  end;
+end;
+
 class procedure TDirectoryUtils.LoadNewFileName(const DataSet: TFDMemTable);
 begin
   DataSet.DisableControls;
@@ -152,6 +174,23 @@ begin
         end;
       end);
     Result := True;
+  finally
+    DataSet.EnableControls;
+  end;
+end;
+
+class procedure TDirectoryUtils.ReplaceClassName(const OldValue, NewValue: string; const DataSet: TFDMemTable);
+begin
+  DataSet.DisableControls;
+  try
+    DataSet.First;
+    while not DataSet.Eof do
+    begin
+      DataSet.Edit;
+      DataSet.FieldByName('NEW_CLASS_NAME').AsString := StringReplace(DataSet.FieldByName('NEW_CLASS_NAME').AsString, OldValue, NewValue, [rfReplaceAll]);
+      DataSet.Post;
+      DataSet.Next;
+    end;
   finally
     DataSet.EnableControls;
   end;
