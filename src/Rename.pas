@@ -98,7 +98,7 @@ procedure TFrmMain.btnReplaceClick(Sender: TObject);
 begin
   if Trim(edtTextFind.Text).IsEmpty or mtFiles.IsEmpty then
     Exit;
-  TDirectoryUtils.ReplaceFileName(edtTextFind.Text, edtReplace.Text, mtFiles);
+  TDirectoryUtils.Replace(mtFilesNEW_FILE_NAME.FieldName, edtTextFind.Text, edtReplace.Text, mtFiles);
 end;
 
 procedure TFrmMain.btnSearchClick(Sender: TObject);
@@ -215,7 +215,7 @@ procedure TFrmMain.Button6Click(Sender: TObject);
 begin
   if Trim(edtTextFindClassName.Text).IsEmpty or mtFiles.IsEmpty then
     Exit;
-  TDirectoryUtils.ReplaceClassName(edtTextFindClassName.Text, edtReplaceClassName.Text, mtFiles);
+  TDirectoryUtils.Replace(mtFilesNEW_CLASS_NAME.FieldName, edtTextFindClassName.Text, edtReplaceClassName.Text, mtFiles);
 end;
 
 procedure TFrmMain.Button7Click(Sender: TObject);

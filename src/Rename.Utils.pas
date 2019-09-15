@@ -15,8 +15,7 @@ type
     class function ValidateFileName(const ADataSet: TFDMemTable): Boolean;
     class procedure GetSubDirectorys(const ADirectory: string; var ADirectoryList: TStrings);
     class procedure ListAllFiles(const ADirectorys: TStrings; const ADataSet: TFDMemTable);
-    class procedure ReplaceFileName(const AOldValue, ANewValue: string; const ADataSet: TFDMemTable);
-    class procedure ReplaceClassName(const AOldValue, ANewValue: string; const ADataSet: TFDMemTable);
+    class procedure Replace(const AFieldName, AOldValue, ANewValue: string; const ADataSet: TFDMemTable);
     class procedure LoadNewFileName(const ADataSet: TFDMemTable);
     class procedure LoadNewClassName(const ADataSet: TFDMemTable);
     class procedure SetOldClassName(const ADataSet: TFDMemTable);
@@ -179,7 +178,7 @@ begin
   end;
 end;
 
-class procedure TDirectoryUtils.ReplaceClassName(const AOldValue, ANewValue: string; const ADataSet: TFDMemTable);
+class procedure TDirectoryUtils.Replace(const AFieldName, AOldValue, ANewValue: string; const ADataSet: TFDMemTable);
 begin
   ADataSet.DisableControls;
   try
@@ -187,24 +186,7 @@ begin
     while not ADataSet.Eof do
     begin
       ADataSet.Edit;
-      ADataSet.FieldByName('NEW_CLASS_NAME').AsString := StringReplace(ADataSet.FieldByName('NEW_CLASS_NAME').AsString, AOldValue, ANewValue, [rfReplaceAll]);
-      ADataSet.Post;
-      ADataSet.Next;
-    end;
-  finally
-    ADataSet.EnableControls;
-  end;
-end;
-
-class procedure TDirectoryUtils.ReplaceFileName(const AOldValue, ANewValue: string; const ADataSet: TFDMemTable);
-begin
-  ADataSet.DisableControls;
-  try
-    ADataSet.First;
-    while not ADataSet.Eof do
-    begin
-      ADataSet.Edit;
-      ADataSet.FieldByName('NEW_FILE_NAME').AsString := StringReplace(ADataSet.FieldByName('NEW_FILE_NAME').AsString, AOldValue, ANewValue, [rfReplaceAll]);
+      ADataSet.FieldByName(AFieldName).AsString := StringReplace(ADataSet.FieldByName(AFieldName).AsString, AOldValue, ANewValue, [rfReplaceAll]);
       ADataSet.Post;
       ADataSet.Next;
     end;
