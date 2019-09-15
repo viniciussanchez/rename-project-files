@@ -103,20 +103,20 @@ end;
 
 procedure TFrmMain.btnSearchClick(Sender: TObject);
 var
-  Directory: string;
-  DirectoryList: TStrings;
+  LDirectory: string;
+  LDirectoryList: TStrings;
 begin
-  if SelectDirectory(Directory, [sdAllowCreate, sdPerformCreate, sdPrompt], 0) then
+  if SelectDirectory(LDirectory, [sdAllowCreate, sdPerformCreate, sdPrompt], 0) then
   begin
-    edtDirectory.Text := Directory;
-    DirectoryList := TStringList.Create;
+    edtDirectory.Text := LDirectory;
+    LDirectoryList := TStringList.Create;
     try
-      DirectoryList.Add(Directory);
-      TDirectoryUtils.GetSubDirectorys(Directory, DirectoryList);
-      TDirectoryUtils.ListAllFiles(DirectoryList, mtFiles);
+      LDirectoryList.Add(LDirectory);
+      TDirectoryUtils.GetSubDirectorys(LDirectory, LDirectoryList);
+      TDirectoryUtils.ListAllFiles(LDirectoryList, mtFiles);
       TDirectoryUtils.SetOldClassName(mtFiles);
     finally
-      DirectoryList.Free;
+      LDirectoryList.Free;
     end;
   end;
 end;
@@ -139,54 +139,54 @@ end;
 
 procedure TFrmMain.Button2Click(Sender: TObject);
 var
-  DataArray: TJSONArray;
-  Data: TStrings;
+  LDataArray: TJSONArray;
+  LData: TStrings;
 begin
   if not FileExists(GetDataFileName) then
   begin
     TDialogs.Warning('Data file not found!');
     Exit;
   end;
-  Data := TStringList.Create;
+  LData := TStringList.Create;
   try
-    Data.LoadFromFile(GetDataFileName);
-    DataArray := TJSONObject.ParseJSONValue(TEncoding.ASCII.GetBytes(Data.Text),0) as TJSONArray;
+    LData.LoadFromFile(GetDataFileName);
+    LDataArray := TJSONObject.ParseJSONValue(TEncoding.ASCII.GetBytes(LData.Text),0) as TJSONArray;
     mtFiles.DisableControls;
     try
       mtFiles.EmptyDataSet;
       TWait.Create('Loading...').Start(
         procedure
         begin
-          mtFiles.LoadFromJSONArray(DataArray);
+          mtFiles.LoadFromJSONArray(LDataArray);
         end);
     finally
       mtFiles.EnableControls;
-      DataArray.Free;
+      LDataArray.Free;
     end;
   finally
-    Data.Free;
+    LData.Free;
   end;
 end;
 
 procedure TFrmMain.Button3Click(Sender: TObject);
 var
-  Data: TJSONArray;
-  SaveFile: TStrings;
+  LData: TJSONArray;
+  LSaveFile: TStrings;
 begin
   mtFiles.DisableControls;
   try
-    Data := mtFiles.ToJSONArray;
+    LData := mtFiles.ToJSONArray;
     try
-      SaveFile := TStringList.Create;
+      LSaveFile := TStringList.Create;
       try
-        SaveFile.Text := Data.ToString;
-        SaveFile.SaveToFile(GetDataFileName);
+        LSaveFile.Text := LData.ToString;
+        LSaveFile.SaveToFile(GetDataFileName);
       finally
-        SaveFile.Free;
+        LSaveFile.Free;
       end;
       TDialogs.Info('Exported: ' + GetDataFileName);
     finally
-      Data.Free;
+      LData.Free;
     end;
   finally
     mtFiles.EnableControls;
@@ -202,7 +202,7 @@ procedure TFrmMain.Button5Click(Sender: TObject);
 begin
   if not mtFiles.Active then
     Exit;
-  if Trim(edtFilterFileName.Text).IsEmpty then
+  if Trim(edtFilterClassName.Text).IsEmpty then
     mtFiles.Filter := 'EXTENSION = ''.pas'''
   else
     mtFiles.Filter :=

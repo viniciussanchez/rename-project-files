@@ -188,6 +188,9 @@ object FrmMain: TFrmMain
       TabOrder = 3
       object TabSheet1: TTabSheet
         Caption = 'File name'
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
         ExplicitHeight = 165
         object Panel4: TPanel
           Left = 0
@@ -305,8 +308,6 @@ object FrmMain: TFrmMain
           Color = cl3DLight
           ParentBackground = False
           TabOrder = 0
-          ExplicitTop = 418
-          ExplicitWidth = 984
           DesignSize = (
             976
             33)
@@ -348,7 +349,6 @@ object FrmMain: TFrmMain
           Color = cl3DLight
           ParentBackground = False
           TabOrder = 1
-          ExplicitTop = 8
           DesignSize = (
             976
             33)
