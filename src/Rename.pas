@@ -53,6 +53,10 @@ type
     Button6: TButton;
     edtReplaceClassName: TEdit;
     Button7: TButton;
+    Panel8: TPanel;
+    Label8: TLabel;
+    edtDirectoryToFind: TEdit;
+    btnFindDirectory: TButton;
     procedure btnSearchClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -68,6 +72,7 @@ type
     procedure Button7Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure btnFindDirectoryClick(Sender: TObject);
   private
     function GetDataFileName: string;
   end;
@@ -79,18 +84,29 @@ implementation
 
 uses Vcl.FileCtrl, Rename.Utils, DataSet.Serialize.Helper, System.JSON, VCL.Wait, Dialogs4D.Factory;
 
+const
+  FILTER_PAS = 'EXTENSION = ''.pas''';
+
 {$R *.dfm}
 
 procedure TFrmMain.btnFilterClick(Sender: TObject);
 begin
   if not mtFiles.Active then
     Exit;
-  if Trim(edtFilterFileName.Text).IsEmpty then
-    mtFiles.Filter := 'EXTENSION = ''.pas'''
-  else
-    mtFiles.Filter :=
-      'EXTENSION = ''.pas'' and (Lower(OLD_FILE_NAME) like ' + QuotedStr('%' + Trim(edtFilterFileName.Text).ToLower + '%') +
+  mtFiles.Filter := FILTER_PAS;
+  if not Trim(edtFilterFileName.Text).IsEmpty then
+    mtFiles.Filter := mtFiles.Filter + ' and (Lower(OLD_FILE_NAME) like ' + QuotedStr('%' + Trim(edtFilterFileName.Text).ToLower + '%') +
       ' or Lower(NEW_FILE_NAME) like ' + QuotedStr('%' + Trim(edtFilterFileName.Text).ToLower + '%') + ')';
+  mtFiles.Filtered := True;
+end;
+
+procedure TFrmMain.btnFindDirectoryClick(Sender: TObject);
+begin
+  if not mtFiles.Active then
+    Exit;
+  mtFiles.Filter := FILTER_PAS;
+  if not Trim(edtDirectoryToFind.Text).IsEmpty then
+    mtFiles.Filter := mtFiles.Filter + ' and Lower(DIRECTORY) like ' + QuotedStr('%' + Trim(edtDirectoryToFind.Text).ToLower + '%');
   mtFiles.Filtered := True;
 end;
 
@@ -202,11 +218,9 @@ procedure TFrmMain.Button5Click(Sender: TObject);
 begin
   if not mtFiles.Active then
     Exit;
-  if Trim(edtFilterClassName.Text).IsEmpty then
-    mtFiles.Filter := 'EXTENSION = ''.pas'''
-  else
-    mtFiles.Filter :=
-      'EXTENSION = ''.pas'' and (Lower(OLD_CLASS_NAME) like ' + QuotedStr('%' + Trim(edtFilterClassName.Text).ToLower + '%') +
+  mtFiles.Filter := FILTER_PAS;
+  if not Trim(edtFilterClassName.Text).IsEmpty then
+    mtFiles.Filter := mtFiles.Filter + ' and (Lower(OLD_CLASS_NAME) like ' + QuotedStr('%' + Trim(edtFilterClassName.Text).ToLower + '%') +
       ' or Lower(NEW_CLASS_NAME) like ' + QuotedStr('%' + Trim(edtFilterClassName.Text).ToLower + '%') + ')';
   mtFiles.Filtered := True;
 end;
@@ -246,7 +260,7 @@ end;
 procedure TFrmMain.FormCreate(Sender: TObject);
 begin
   mtFiles.Active := True;
-  mtFiles.Filter := 'EXTENSION = ''.pas''';
+  mtFiles.Filter := FILTER_PAS;
   mtFiles.Filtered := True;
 end;
 

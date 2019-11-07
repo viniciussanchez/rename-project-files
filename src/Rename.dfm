@@ -26,7 +26,7 @@ object FrmMain: TFrmMain
       Left = 0
       Top = 41
       Width = 984
-      Height = 316
+      Height = 286
       Align = alClient
       DataSource = dsFiles
       TabOrder = 0
@@ -183,7 +183,7 @@ object FrmMain: TFrmMain
       Top = 357
       Width = 984
       Height = 94
-      ActivePage = TabSheet1
+      ActivePage = TabSheet2
       Align = alBottom
       TabOrder = 3
       object TabSheet1: TTabSheet
@@ -202,16 +202,16 @@ object FrmMain: TFrmMain
             976
             33)
           object Label2: TLabel
-            Left = 9
+            Left = 17
             Top = 10
             Width = 90
             Height = 13
             Caption = 'File name to find:'
           end
           object edtFilterFileName: TEdit
-            Left = 105
+            Left = 113
             Top = 6
-            Width = 765
+            Width = 757
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             TabOrder = 0
@@ -243,7 +243,7 @@ object FrmMain: TFrmMain
             976
             33)
           object Label4: TLabel
-            Left = 39
+            Left = 46
             Top = 10
             Width = 61
             Height = 13
@@ -258,9 +258,9 @@ object FrmMain: TFrmMain
             Caption = 'Replace with:'
           end
           object edtTextFind: TEdit
-            Left = 105
+            Left = 113
             Top = 6
-            Width = 415
+            Width = 407
             Height = 21
             Anchors = [akLeft, akTop, akRight]
             TabOrder = 0
@@ -388,6 +388,45 @@ object FrmMain: TFrmMain
             TextHint = 'Type new value...'
           end
         end
+      end
+    end
+    object Panel8: TPanel
+      Left = 0
+      Top = 327
+      Width = 984
+      Height = 30
+      Align = alBottom
+      BevelOuter = bvNone
+      TabOrder = 4
+      DesignSize = (
+        984
+        30)
+      object Label8: TLabel
+        Left = 24
+        Top = 9
+        Width = 87
+        Height = 13
+        Caption = 'Directory to find:'
+      end
+      object edtDirectoryToFind: TEdit
+        Left = 117
+        Top = 5
+        Width = 757
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 0
+        TextHint = 'Type directory to find...'
+        OnKeyDown = edtFilterFileNameKeyDown
+      end
+      object btnFindDirectory: TButton
+        Left = 880
+        Top = 3
+        Width = 97
+        Height = 25
+        Anchors = [akTop, akRight]
+        Caption = 'Filter'
+        TabOrder = 1
+        OnClick = btnFindDirectoryClick
       end
     end
   end
